@@ -29,7 +29,7 @@ form label {
   font-weight: bold;
 }
 
-form input:not([type="radio"]):not([type="checkbox"]):not([type="color"]),
+form input:not([type="radio"]):not([type="checkbox"]),
 form select,
 form textarea {
   width: 100%;
@@ -38,13 +38,6 @@ form textarea {
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
-}
-
-/* Fix width for color input */
-input[type="color"] {
-  width: 50px;
-  height: 35px;
-  vertical-align: middle;
 }
 
 /* Specific styling for range input value display */

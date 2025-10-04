@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const rangeInput = document.getElementById("satisfaction");
   const rangeValueDisplay = document.getElementById("rangeValue");
 
-  // Update range value display
+  // Update range value display for Energy Level
   rangeInput.addEventListener("input", () => {
     rangeValueDisplay.textContent = rangeInput.value;
   });
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
       isValid = false;
     };
 
-    // --- Custom Validation Logic (Adapted for Pet Context) ---
+    // --- Custom Validation Logic ---
 
     // 1. Pet Name (Text) Validation
     const petName = document.getElementById("fullName");
@@ -100,7 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // 8. File Input Validation (Pet Photo)
     const petPhoto = document.getElementById("profilePic");
     if (petPhoto.files.length === 0) {
-      markInvalid(petPhoto, "A pet photo is required.", false); // Don't scroll to file input, often bad UX
+      // Mark invalid, but often better not to scroll to the file input
+      markInvalid(petPhoto, "A pet photo is required.", false);
     }
 
     // Final check using native HTML5 validation constraints
@@ -126,12 +127,28 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     } else {
-      // If valid, prevent default submission to handle redirection manually
+      // If valid, prevent default submission to handle console logging and redirection
       event.preventDefault();
 
-      console.log("Pet profile valid. Redirecting to confirmation...");
+      // 1. LOG FORM DATA TO CONSOLE
+      const formData = new FormData(form);
+      const data = {};
 
-      // REDIRECT to the confirmation page
+      // Convert FormData to a readable JavaScript object
+      formData.forEach((value, key) => {
+        // Skip logging the file content itself
+        if (key === "petPhoto" && value instanceof File) {
+          data[key] = `File: ${value.name} (${value.size} bytes)`;
+        } else {
+          data[key] = value;
+        }
+      });
+
+      console.log("--- Form Submission Data ---");
+      console.log(data);
+      console.log("--------------------------");
+
+      // 2. REDIRECT to the confirmation page
       window.location.href = form.action;
     }
   };

@@ -10,7 +10,7 @@
     <div class="container">
       <h1>Pet Profile Setup 🐾</h1>
       <form id="surveyForm" action="confirmation.html" method="GET">
-        <label for="fullName">Pet's Name (Text):</label>
+        <label for="fullName">Pet's Name:</label>
         <input
           type="text"
           id="fullName"
@@ -20,7 +20,7 @@
         />
         <span class="error-message" id="fullNameError"></span>
 
-        <label for="email">Owner's Primary Email (Email):</label>
+        <label for="email">Owner's Primary Email:</label>
         <input
           type="email"
           id="email"
@@ -30,9 +30,7 @@
         />
         <span class="error-message" id="emailError"></span>
 
-        <label for="password"
-          >Profile Password (Min 8 chars, incl. digit):</label
-        >
+        <label for="password">Profile Password:</label>
         <input
           type="password"
           id="password"
@@ -42,21 +40,15 @@
         />
         <span class="error-message" id="passwordError"></span>
 
-        <label for="age">Pet's Age (Years - 1 to 30):</label>
+        <label for="age">Pet's Age:</label>
         <input type="number" id="age" name="petAge" min="1" max="30" required />
         <span class="error-message" id="ageError"></span>
 
-        <label for="dob">Adoption Date (Date):</label>
+        <label for="dob">Adoption Date:</label>
         <input type="date" id="dob" name="adoptionDate" required />
         <span class="error-message" id="dobError"></span>
 
-        <label for="preferredTime">Evening Feeding Time (Time):</label>
-        <input type="time" id="preferredTime" name="feedingTime" />
-
-        <label for="favColor">Preferred Collar Color (Color):</label>
-        <input type="color" id="favColor" name="collarColor" value="#f1c40f" />
-
-        <label for="satisfaction">Energy Level (Range: 1-10):</label>
+        <label for="satisfaction">Energy Level:</label>
         <input
           type="range"
           id="satisfaction"
@@ -67,7 +59,7 @@
         />
         <span id="rangeValue">7</span>
 
-        <label for="profilePic">Upload a Pet Photo (File):</label>
+        <label for="profilePic">Upload a Pet Photo:</label>
         <input
           type="file"
           id="profilePic"
@@ -86,7 +78,7 @@
           <label for="newsletter">Vet records are up-to-date</label>
         </div>
 
-        <label>Species (Radio):</label>
+        <label>Species:</label>
         <div class="radio-group">
           <input type="radio" id="male" name="species" value="Dog" required />
           <label for="male">Dog</label>
@@ -97,7 +89,7 @@
         </div>
         <span class="error-message" id="genderError"></span>
 
-        <label for="country">Diet Type (Select):</label>
+        <label for="country">Diet Type:</label>
         <select id="country" name="dietType" required>
           <option value="">-- Select diet --</option>
           <option value="kibble">Dry Kibble</option>
@@ -107,7 +99,7 @@
         </select>
         <span class="error-message" id="countryError"></span>
 
-        <label for="comments">Behavioral Notes/Allergies (Textarea):</label>
+        <label for="comments">Behavioral Notes/Allergies:</label>
         <textarea
           id="comments"
           name="notes"
