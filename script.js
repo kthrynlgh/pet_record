@@ -3,6 +3,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const rangeInput = document.getElementById("satisfaction");
   const rangeValueDisplay = document.getElementById("rangeValue");
 
+  // New Modal Elements
+  const modal = document.getElementById("confirmationModal");
+  const modalDataOutput = document.getElementById("modalDataOutput");
+  const closeModalButton = document.getElementById("closeModalButton");
+  const okButton = document.getElementById("okButton");
+
+  // Function to close the modal
+  const closeModal = () => {
+    modal.style.display = "none";
+    // Optional: Reset the form after successful submission and closure
+    form.reset();
+    rangeValueDisplay.textContent = rangeInput.value; // Reset range display
+  };
+
+  // Attach close handlers
+  closeModalButton.addEventListener("click", closeModal);
+  okButton.addEventListener("click", closeModal);
+
+  // Close the modal if the user clicks anywhere outside of it
+  window.addEventListener("click", (event) => {
+    if (event.target == modal) {
+      closeModal();
+    }
+  });
+
   // Update range value display for Energy Level
   rangeInput.addEventListener("input", () => {
     rangeValueDisplay.textContent = rangeInput.value;
@@ -20,6 +45,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document
       .querySelectorAll("input, select, textarea")
       .forEach((input) => input.classList.remove("invalid"));
+
+    // Clear custom age error styling
+    document.getElementById("ageYears").classList.remove("invalid");
+    document.getElementById("ageMonths").classList.remove("invalid");
 
     // Helper function to mark invalid and capture the first error
     const markInvalid = (element, message, capture = true) => {
@@ -61,11 +90,32 @@ document.addEventListener("DOMContentLoaded", () => {
       markInvalid(password, "Password should contain at least one number.");
     }
 
-    // 4. Pet Age (Number) Validation
-    const petAge = document.getElementById("age");
-    const ageVal = parseInt(petAge.value);
-    if (isNaN(ageVal) || ageVal < 1 || ageVal > 30) {
-      markInvalid(petAge, "Pet's age must be between 1 and 30 years.");
+    // 4. Pet Age (Years and Months) Validation
+    const ageYearsInput = document.getElementById("ageYears");
+    const ageMonthsInput = document.getElementById("ageMonths");
+    const ageYears = parseInt(ageYearsInput.value) || 0; // Use 0 if NaN
+    const ageMonths = parseInt(ageMonthsInput.value) || 0; // Use 0 if NaN
+
+    const totalMonths = ageYears * 12 + ageMonths;
+
+    if (
+      ageYears < 0 ||
+      ageMonths < 0 ||
+      totalMonths === 0 ||
+      isNaN(ageYears) ||
+      isNaN(ageMonths)
+    ) {
+      // Mark both fields invalid if the total age is 0 or inputs are invalid
+      ageYearsInput.classList.add("invalid");
+      ageMonthsInput.classList.add("invalid");
+      document.getElementById("ageError").textContent =
+        "Please enter a valid age (at least 1 month).";
+      isValid = false;
+      if (!firstInvalidField) {
+        firstInvalidField = ageYearsInput;
+      }
+    } else if (ageYears > 30) {
+      markInvalid(ageYearsInput, "Pet's age cannot exceed 30 years.");
     }
 
     // 5. Adoption Date (Date) Validation
@@ -127,29 +177,89 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     } else {
-      // If valid, prevent default submission to handle console logging and redirection
+      // If valid, prevent default submission
       event.preventDefault();
 
-      // 1. LOG FORM DATA TO CONSOLE
       const formData = new FormData(form);
-      const data = {};
+      const submittedData = {};
+      let htmlOutput = "";
 
-      // Convert FormData to a readable JavaScript object
+      const petAgeString = `${ageYears} Years, ${ageMonths} Months`;
+
+      // Define a list of fields to display and their friendly names
+      const fieldsToDisplay = {
+        petName: "Pet's Name",
+        ownerEmail: "Owner's Email",
+        petAge: "Pet's Age", // Custom field for age string
+        adoptionDate: "Adoption Date",
+        energyLevel: "Energy Level (1-10)",
+        petPhoto: "Pet Photo File",
+        vetChecked: "Vet Records Up-to-Date",
+        species: "Species",
+        dietType: "Diet Type",
+        // *** CHANGED THIS LABEL ***
+        notes: "Quirks & Habits",
+        // ***************************
+      };
+
+      // Manually add the combined age string to the display/log data
+      submittedData["petAge"] = petAgeString;
+      htmlOutput += `<p><strong>${fieldsToDisplay.petAge}:</strong> ${petAgeString}</p>`;
+
+      // 1. Log and populate the modal content
       formData.forEach((value, key) => {
-        // Skip logging the file content itself
+        let displayValue = value;
+
+        // Handle specific values for logging/display
         if (key === "petPhoto" && value instanceof File) {
-          data[key] = `File: ${value.name} (${value.size} bytes)`;
+          submittedData[key] = `File: ${value.name} (${value.size} bytes)`;
+          displayValue = value.name;
         } else {
-          data[key] = value;
+          submittedData[key] = value;
+        }
+
+        // Build HTML for the modal, skipping individual age fields, password, and hidden fields
+        if (
+          fieldsToDisplay[key] &&
+          key !== "petAgeYears" &&
+          key !== "petAgeMonths" &&
+          key !== "petAge"
+        ) {
+          let label = fieldsToDisplay[key];
+
+          if (key === "vetChecked" && value === "yes") {
+            htmlOutput += `<p><strong>${label}:</strong> Yes</p>`;
+          } else if (key === "notes" && !value) {
+            htmlOutput += `<p><strong>${label}:</strong> None provided</p>`; // Show 'None provided' if left blank
+          } else if (
+            key !== "vetChecked" &&
+            key !== "password" &&
+            key !== "formType"
+          ) {
+            htmlOutput += `<p><strong>${label}:</strong> ${displayValue}</p>`;
+          }
+        }
+        // Ensure all submitted form fields (except individual age parts) are logged
+        if (key !== "petAgeYears" && key !== "petAgeMonths") {
+          submittedData[key] = value;
         }
       });
 
+      // Add 'vetChecked' explicitly if it wasn't present (meaning unchecked)
+      if (!formData.has("vetChecked")) {
+        htmlOutput += `<p><strong>Vet Records Up-to-Date:</strong> No</p>`;
+        submittedData["vetChecked"] = "No"; // Add to log as 'No'
+      }
+
+      // 2. Display Log in Console
+      // Note: The submittedData object now includes the combined 'petAge' string
       console.log("--- Form Submission Data ---");
-      console.log(data);
+      console.log(submittedData);
       console.log("--------------------------");
 
-      // 2. REDIRECT to the confirmation page
-      window.location.href = form.action;
+      // 3. Display Data in Modal and Show Modal
+      modalDataOutput.innerHTML = htmlOutput;
+      modal.style.display = "block";
     }
   };
 

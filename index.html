@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <h1>Pet Profile Setup 🐾</h1>
-      <form id="surveyForm" action="confirmation.html" method="GET">
+      <form id="surveyForm" action="#" method="GET">
         <label for="fullName">Pet's Name:</label>
         <input
           type="text"
@@ -40,10 +40,44 @@
         />
         <span class="error-message" id="passwordError"></span>
 
-        <label for="age">Pet's Age:</label>
-        <input type="number" id="age" name="petAge" min="1" max="30" required />
+        <label>Pet's Age:</label>
+        <div style="display: flex; gap: 10px; margin-bottom: 5px">
+          <div style="flex-grow: 1">
+            <input
+              type="number"
+              id="ageYears"
+              name="petAgeYears"
+              min="0"
+              max="30"
+              value="0"
+              required
+              style="width: 100%"
+            />
+            <label
+              for="ageYears"
+              style="font-weight: normal; margin-top: 0; font-size: 0.9em"
+              >Years</label
+            >
+          </div>
+          <div style="flex-grow: 1">
+            <input
+              type="number"
+              id="ageMonths"
+              name="petAgeMonths"
+              min="0"
+              max="11"
+              value="0"
+              required
+              style="width: 100%"
+            />
+            <label
+              for="ageMonths"
+              style="font-weight: normal; margin-top: 0; font-size: 0.9em"
+              >Months</label
+            >
+          </div>
+        </div>
         <span class="error-message" id="ageError"></span>
-
         <label for="dob">Adoption Date:</label>
         <input type="date" id="dob" name="adoptionDate" required />
         <span class="error-message" id="dobError"></span>
@@ -99,19 +133,31 @@
         </select>
         <span class="error-message" id="countryError"></span>
 
-        <label for="comments">Behavioral Notes/Allergies:</label>
+        <label for="comments">Quirks & Habits:</label>
         <textarea
           id="comments"
           name="notes"
           rows="4"
           maxlength="500"
-          placeholder="List any known allergies, behavioral issues, or special needs."
+          placeholder="Does your pet love belly rubs? Fear the vacuum? Mention their unique quirks and favorite things here."
         ></textarea>
-
         <input type="hidden" name="formType" value="PetProfile" />
 
         <button type="submit">Create Pet Profile</button>
       </form>
+    </div>
+
+    <div id="confirmationModal" class="modal">
+      <div class="modal-content">
+        <span class="close-button" id="closeModalButton">&times;</span>
+        <h2>✅ Profile Created!</h2>
+        <p>
+          Your pet's profile is complete. Here is a summary of the data
+          submitted:
+        </p>
+        <div id="modalDataOutput" class="data-summary"></div>
+        <button id="okButton">OK</button>
+      </div>
     </div>
     <script src="script.js"></script>
   </body>
